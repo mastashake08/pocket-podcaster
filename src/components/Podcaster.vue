@@ -19,7 +19,8 @@
           <v-text-field type="url" placeholder="Enter stream URL" v-model="url" label="Stream URL" />
         </p>
         <v-row class="text-center">
-          <v-btn v-on:click="playAudio">Play</v-btn>
+          <v-btn v-on:click="playAudio" v-if="!isPlaying">Play</v-btn>
+            <v-btn v-on:click="stopAudio" v-else color="red">Stop</v-btn>
         </v-row>
       </v-col>
     </v-row>
@@ -31,6 +32,7 @@
     name: 'Podcaster',
 
     data: () => ({
+      isPlaying: false,
       audio: {},
       url : 'https://playerservices.streamtheworld.com/api/livestream-redirect/WEKUFM.mp3'
     }),
@@ -38,16 +40,16 @@
       setMediaControls: function () {
         if ('mediaSession' in navigator) {
           navigator.mediaSession.metadata = new window.MediaMetadata({
-            title: 'Unforgettable',
-            artist: 'Nat King Cole',
-            album: 'The Ultimate Collection (Remastered)',
+            title: 'Pocket Podcaster',
+            artist: 'J Computer Solutions LLC',
+            album: 'Pocket Podcaster',
             artwork: [
-              { src: 'https://dummyimage.com/96x96',   sizes: '96x96',   type: 'image/png' },
-              { src: 'https://dummyimage.com/128x128', sizes: '128x128', type: 'image/png' },
-              { src: 'https://dummyimage.com/192x192', sizes: '192x192', type: 'image/png' },
-              { src: 'https://dummyimage.com/256x256', sizes: '256x256', type: 'image/png' },
-              { src: 'https://dummyimage.com/384x384', sizes: '384x384', type: 'image/png' },
-              { src: 'https://dummyimage.com/512x512', sizes: '512x512', type: 'image/png' },
+              { src: '../assets/logo-96.png',   sizes: '96x96',   type: 'image/png' },
+              { src: '../assets/logo-128.png', sizes: '128x128', type: 'image/png' },
+              { src: '../assets/logo-192.png', sizes: '192x192', type: 'image/png' },
+              { src: '../assets/logo-256.png', sizes: '256x256', type: 'image/png' },
+              { src: '../assets/logo-384.png', sizes: '384x384', type: 'image/png' },
+              { src: '../assets/logo-512.png', sizes: '512x512', type: 'image/png' },
             ]
           });
 
@@ -58,17 +60,19 @@
       },
       playAudio: function () {
         this.audio = new Audio(this.url)
-        console.log(this.audio)
+        this.isPlaying = true
         this.audio.play()
           .then(()=> {
         }).catch(error => { console.log(error) });
       },
       pauseAudio: function () {
         this.audio.pause()
+        this.isPlaying = false
       },
       stopAudio: function () {
         this.audio.pause()
         this.audio = {}
+        this.isPlaying = false
       }
     },
     mounted () {
