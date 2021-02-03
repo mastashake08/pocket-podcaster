@@ -24,6 +24,9 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-row class="text-center">
+      <v-btn class="pa-md-4 mx-lg-auto" v-for="x in presets" v-on:click="setAudio(x)" :key="x.name" :color="x.color"> {{x.name}} </v-btn>
+    </v-row>
   </v-container>
 </template>
 
@@ -34,7 +37,34 @@
     data: () => ({
       isPlaying: false,
       audio: {},
-      url : 'https://playerservices.streamtheworld.com/api/livestream-redirect/WEKUFM.mp3'
+      url : '',
+      presets : [
+        {
+          name: 'WEKU-NPR',
+          url : 'https://playerservices.streamtheworld.com/api/livestream-redirect/WEKUFM.mp3',
+          color: "green"
+        },
+        {
+          name: 'WEKU-Classical',
+          url: 'https://playerservices.streamtheworld.com/api/livestream-redirect/WEKUHD2.mp3',
+          color: 'orange'
+        },
+        {
+          name: 'Vocalo Radio',
+          url: 'https://stream.wbez.org/vocalo128',
+          color: 'blue'
+        },
+        {
+          name: 'WFPK',
+          url: 'https://lpm.streamguys1.com/wfpk-popup',
+          color: 'yellow'
+        },
+        {
+          name: 'KEXP',
+          url: 'https://kexp-mp3-128.streamguys1.com/kexp128.mp3?listenerid=8044407b7410ad01f8210fd508279708&awparams=companionAds%3Atrue',
+          color: '#cb349a'
+        }
+      ]
     }),
     methods: {
       setMediaControls: function () {
@@ -64,6 +94,11 @@
         }
       },
       playAudio: function () {
+        if(this.isPlaying){
+          this.isPlaying = false
+          this.audio.pause()
+          this.audio = {}
+        }
         this.audio = new Audio(this.url)
         this.isPlaying = true
         this.audio.play()
@@ -78,6 +113,11 @@
         this.audio.pause()
         this.audio = {}
         this.isPlaying = false
+      },
+      setAudio: function(preset) {
+        this.url = preset.url
+        navigator.mediaSession.metadata.title = preset.name
+        this.playAudio()
       }
     },
     mounted () {
