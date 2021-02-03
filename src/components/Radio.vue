@@ -44,12 +44,12 @@
             artist: 'J Computer Solutions LLC',
             album: 'Pocket Radio',
             artwork: [
-              { src: 'https://radio.jcompsolu.com/logo-96.png',   sizes: '96x96',   type: 'image/png' },
-              { src: 'https://radio.jcompsolu.com/logo-128.png', sizes: '128x128', type: 'image/png' },
-              { src: 'https://radio.jcompsolu.com/logo-192.png', sizes: '192x192', type: 'image/png' },
-              { src: 'https://radio.jcompsolu.com/logo-256.png', sizes: '256x256', type: 'image/png' },
-              { src: 'https://radio.jcompsolu.com/logo-384.png', sizes: '384x384', type: 'image/png' },
-              { src: 'https://radio.jcompsolu.com/logo-512.png', sizes: '512x512', type: 'image/png' },
+              { src: 'https://radio.jcompsolu.com/images/logo-96.png',   sizes: '96x96',   type: 'image/png' },
+              { src: 'https://radio.jcompsolu.com/images/logo-128.png', sizes: '128x128', type: 'image/png' },
+              { src: 'https://radio.jcompsolu.com/images/logo-192.png', sizes: '192x192', type: 'image/png' },
+              { src: 'https://radio.jcompsolu.com/images/logo-256.png', sizes: '256x256', type: 'image/png' },
+              { src: 'https://radio.jcompsolu.com/images/logo-384.png', sizes: '384x384', type: 'image/png' },
+              { src: 'https://radio.jcompsolu.com/images/logo-512.png', sizes: '512x512', type: 'image/png' },
             ]
           });
 
