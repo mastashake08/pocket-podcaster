@@ -3,7 +3,7 @@
     <v-row class="text-center">
       <v-col cols="12">
         <v-img
-          :src="require('../assets/logo.png')"
+          :src="require('https://radio.jcompsolu.com/logo.png')"
           class="my-3"
           contain
           height="200"
@@ -12,7 +12,7 @@
 
       <v-col class="mb-4">
         <h1 class="display-2 font-weight-bold mb-3">
-          Welcome to Pocket Podcaster
+          Welcome to PWA Radio
         </h1>
 
         <p class="subheading font-weight-regular text-center">
@@ -20,7 +20,7 @@
         </p>
         <v-row class="text-center">
           <v-btn v-on:click="playAudio" v-if="!isPlaying">Play</v-btn>
-            <v-btn v-on:click="stopAudio" v-else color="red">Stop</v-btn>
+          <v-btn v-on:click="stopAudio" v-else color="red">Stop</v-btn>
         </v-row>
       </v-col>
     </v-row>
@@ -29,7 +29,7 @@
 
 <script>
   export default {
-    name: 'Podcaster',
+    name: 'Radio',
 
     data: () => ({
       isPlaying: false,
@@ -40,16 +40,16 @@
       setMediaControls: function () {
         if ('mediaSession' in navigator) {
           navigator.mediaSession.metadata = new window.MediaMetadata({
-            title: 'Pocket Podcaster',
+            title: 'Pocket Radio',
             artist: 'J Computer Solutions LLC',
-            album: 'Pocket Podcaster',
+            album: 'Pocket Radio',
             artwork: [
-              { src: '../assets/logo-96.png',   sizes: '96x96',   type: 'image/png' },
-              { src: '../assets/logo-128.png', sizes: '128x128', type: 'image/png' },
-              { src: '../assets/logo-192.png', sizes: '192x192', type: 'image/png' },
-              { src: '../assets/logo-256.png', sizes: '256x256', type: 'image/png' },
-              { src: '../assets/logo-384.png', sizes: '384x384', type: 'image/png' },
-              { src: '../assets/logo-512.png', sizes: '512x512', type: 'image/png' },
+              { src: 'https://radio.jcompsolu.com/logo-96.png',   sizes: '96x96',   type: 'image/png' },
+              { src: 'https://radio.jcompsolu.com/logo-128.png', sizes: '128x128', type: 'image/png' },
+              { src: 'https://radio.jcompsolu.com/logo-192.png', sizes: '192x192', type: 'image/png' },
+              { src: 'https://radio.jcompsolu.com/logo-256.png', sizes: '256x256', type: 'image/png' },
+              { src: 'https://radio.jcompsolu.com/logo-384.png', sizes: '384x384', type: 'image/png' },
+              { src: 'https://radio.jcompsolu.com/logo-512.png', sizes: '512x512', type: 'image/png' },
             ]
           });
 

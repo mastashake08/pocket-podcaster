@@ -1,8 +1,8 @@
 {
-    "name": "Pocket Podcaster",
-    "short_name": "Podcaster",
+    "name": "Pocket Radio",
+    "short_name": "Radio",
     "description": "Simple audio streamer PWA using the MediaSession API",
-    "start_url": "https://podcaster.jcompsolu.com",
+    "start_url": "https://radio.jcompsolu.com",
     "scope": "/",
     "display": "standalone",
     "orientation": "portrait",

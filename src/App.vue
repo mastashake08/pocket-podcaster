@@ -6,25 +6,25 @@
       dark
     >
       <div class="d-flex align-center">
-        <h2>Pocket Podcaster</h2>
+        <h2>Pocket Radio</h2>
       </div>
       <v-spacer></v-spacer>
     </v-app-bar>
 
     <v-main>
-      <Podcaster/>
+      <Radio/>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import Podcaster from './components/Podcaster';
+import Radio from './components/Radio';
 
 export default {
   name: 'App',
 
   components: {
-    Podcaster,
+    Radio,
   },
 
   data: () => ({
