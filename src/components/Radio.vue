@@ -56,6 +56,11 @@
           navigator.mediaSession.setActionHandler('play', this.playAudio());
           navigator.mediaSession.setActionHandler('pause', this.pauseAudio());
           navigator.mediaSession.setActionHandler('stop', this.stopAudio());
+          navigator.mediaSession.setActionHandler('seekbackward', function() { /* Code excerpted. */ });
+          navigator.mediaSession.setActionHandler('seekforward', function() { /* Code excerpted. */ });
+          navigator.mediaSession.setActionHandler('seekto', function() { /* Code excerpted. */ });
+          navigator.mediaSession.setActionHandler('previoustrack', function() { /* Code excerpted. */ });
+          navigator.mediaSession.setActionHandler('nexttrack', function() { /* Code excerpted. */ });
         }
       },
       playAudio: function () {
