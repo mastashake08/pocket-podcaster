@@ -1,0 +1,15 @@
+{
+    "name": "Pocket Podcaster",
+    "short_name": "Podcaster",
+    "description": "Simple audio streamer PWA using the MediaSession API",
+    "start_url": "https://podcaster.jcompsolu.com",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "lang": "English",
+    "icons": [{
+      "src": "images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }]
+}
