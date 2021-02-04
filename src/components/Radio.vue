@@ -30,7 +30,7 @@
     <v-row class="text-center">
       <v-select
           v-model="currentPodcast"
-          hint="Favorite Podcasts"
+          :hint="`${currentPodcast.name}, ${currentPodcast.author}`"
           :items="favoritePodcasts"
           item-text="name"
           item-value="url"
@@ -58,27 +58,32 @@
         {
           name: 'WEKU-NPR',
           url : 'https://playerservices.streamtheworld.com/api/livestream-redirect/WEKUFM.mp3',
-          color: "green"
+          color: "green",
+          author: 'NPR'
         },
         {
           name: 'WEKU-Classical',
           url: 'https://playerservices.streamtheworld.com/api/livestream-redirect/WEKUHD2.mp3',
-          color: 'orange'
+          color: 'orange',
+          author: 'NPR'
         },
         {
           name: 'Vocalo Radio',
           url: 'https://stream.wbez.org/vocalo128',
-          color: 'blue'
+          color: 'blue',
+          author: 'NPR'
         },
         {
           name: 'WFPK',
           url: 'https://lpm.streamguys1.com/wfpk-popup',
-          color: 'yellow'
+          color: 'yellow',
+          author: 'NPR'
         },
         {
           name: 'KEXP',
           url: 'https://kexp-mp3-128.streamguys1.com/kexp128.mp3?listenerid=8044407b7410ad01f8210fd508279708&awparams=companionAds%3Atrue',
-          color: '#cb349a'
+          color: '#cb349a',
+          author: 'NPR'
         }
       ],
       favoritePodcasts: [],
@@ -145,6 +150,7 @@
       setAudio: function(preset) {
         this.url = preset.url
         navigator.mediaSession.metadata.title = preset.name
+        navigator.mediaSession.metadata.artist = preset.author
         if(preset.image) {
           navigator.mediaSession.metadata.artwork = [
             { src: preset.image }
@@ -155,6 +161,8 @@
     },
     mounted () {
       this.setMediaControls()
+    },
+    created () {
       this.podcastURLS.forEach(pod => {
         fetch(pod.url)
         .then(response => response.text())
@@ -163,10 +171,12 @@
           const items = data.querySelectorAll("item");
           for (let i = 0; i < items.length; i++) {
             let item = items[i];
+            console.log(item)
             let image = item.getElementsByTagName("itunes:image")[0].getAttribute("href")
-            let title = item.querySelector("title").innerHTML
+            let title = item.querySelector("title").innerHTML.replace("<![CDATA[", "").replace("]]>", "")
+            let author = item.getElementsByTagName("dc:creator")[0].innerHTML.replace("<![CDATA[", "").replace("]]>", "")
             let url = item.querySelector("enclosure").getAttribute("url")
-            let podcast = { name: title.replace("<![CDATA[", "").replace("]]>", ""), url: url, image: image }
+            let podcast = { name: title, url: url, image: image, author: author }
             this.favoritePodcasts.push(podcast)
           }
         })
