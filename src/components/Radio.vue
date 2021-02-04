@@ -84,6 +84,12 @@
           url: 'https://kexp-mp3-128.streamguys1.com/kexp128.mp3?listenerid=8044407b7410ad01f8210fd508279708&awparams=companionAds%3Atrue',
           color: '#cb349a',
           author: 'NPR'
+        },
+        {
+          name: 'Lofi Hip Hop Radio',
+          url: 'https://stream.zeno.fm/0r0xa792kwzuv',
+          color: '#4f99cb',
+          author: 'Lofi Hip Hop Radio'
         }
       ],
       favoritePodcasts: [],
