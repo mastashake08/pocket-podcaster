@@ -30,25 +30,11 @@
     <v-row class="text-center">
       <v-select
           v-model="currentPodcast"
-          hint="Code Life Episodes"
-          :items="codeLifeEpisodes"
+          hint="Favorite Podcasts"
+          :items="favoritePodcasts"
           item-text="name"
           item-value="url"
-          label="Code Life Episodes"
-          persistent-hint
-          return-object
-          single-line
-          @change="playPodcast"
-        ></v-select>
-    </v-row>
-    <v-row class="text-center">
-      <v-select
-          v-model="currentPodcast"
-          hint="Intimate Spaces Episodes"
-          :items="intimateEpisodes"
-          item-text="name"
-          item-value="url"
-          label="Intimate Spaces Episodes"
+          label="Favorite Podcasts"
           persistent-hint
           return-object
           single-line
@@ -95,11 +81,12 @@
           color: '#cb349a'
         }
       ],
-      codeLifeEpisodes: [],
-      intimateEpisodes: [],
+      favoritePodcasts: [],
+
       podcastURLS: [
         { url: 'https://anchor.fm/s/fdc3ac0/podcast/rss', name: 'Code Life' },
-        { url: 'https://anchor.fm/s/42d5fca4/podcast/rss' , name: 'Intimate Spaces' }
+        { url: 'https://anchor.fm/s/42d5fca4/podcast/rss' , name: 'Intimate Spaces' },
+        { url: 'https://feeds.npr.org/510289/podcast.xml', name: 'Project Money'}
 
       ]
     }),
@@ -180,13 +167,7 @@
             let title = item.querySelector("title").innerHTML
             let url = item.querySelector("enclosure").getAttribute("url")
             let podcast = { name: title.replace("<![CDATA[", "").replace("]]>", ""), url: url, image: image }
-            console.log(pod.name)
-            if(pod.name === 'Code Life') {
-              this.codeLifeEpisodes.push(podcast)
-            } else {
-              this.intimateEpisodes.push(podcast)
-            }
-
+            this.favoritePodcasts.push(podcast)
           }
         })
       })
