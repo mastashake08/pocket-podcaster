@@ -27,6 +27,34 @@
     <v-row class="text-center">
       <v-btn class="pa-md-4 mx-lg-auto" v-for="x in presets" v-on:click="setAudio(x)" :key="x.name" :color="x.color"> {{x.name}} </v-btn>
     </v-row>
+    <v-row class="text-center">
+      <v-select
+          v-model="currentPodcast"
+          hint="Code Life Episodes"
+          :items="codeLifeEpisodes"
+          item-text="name"
+          item-value="url"
+          label="Code Life Episodes"
+          persistent-hint
+          return-object
+          single-line
+          @change="playPodcast"
+        ></v-select>
+    </v-row>
+    <v-row class="text-center">
+      <v-select
+          v-model="currentPodcast"
+          hint="Intimate Spaces Episodes"
+          :items="intimateEpisodes"
+          item-text="name"
+          item-value="url"
+          label="Intimate Spaces Episodes"
+          persistent-hint
+          return-object
+          single-line
+          @change="playPodcast"
+        ></v-select>
+    </v-row>
   </v-container>
 </template>
 
@@ -38,6 +66,8 @@
       isPlaying: false,
       audio: {},
       url : '',
+      currentPodcast: {},
+      selectedEpisode: {},
       presets : [
         {
           name: 'WEKU-NPR',
@@ -64,6 +94,13 @@
           url: 'https://kexp-mp3-128.streamguys1.com/kexp128.mp3?listenerid=8044407b7410ad01f8210fd508279708&awparams=companionAds%3Atrue',
           color: '#cb349a'
         }
+      ],
+      codeLifeEpisodes: [],
+      intimateEpisodes: [],
+      podcastURLS: [
+        { url: 'https://anchor.fm/s/fdc3ac0/podcast/rss', name: 'Code Life' },
+        { url: 'https://anchor.fm/s/42d5fca4/podcast/rss' , name: 'Intimate Spaces' }
+
       ]
     }),
     methods: {
@@ -93,6 +130,10 @@
           navigator.mediaSession.setActionHandler('nexttrack', function() { /* Code excerpted. */ });
         }
       },
+      playPodcast: function () {
+        this.setAudio(this.currentPodcast)
+        this.playAudio()
+      },
       playAudio: function () {
         if(this.isPlaying){
           this.isPlaying = false
@@ -117,11 +158,38 @@
       setAudio: function(preset) {
         this.url = preset.url
         navigator.mediaSession.metadata.title = preset.name
+        if(preset.image) {
+          navigator.mediaSession.metadata.artwork = [
+            { src: preset.image }
+          ]
+        }
         this.playAudio()
       }
     },
     mounted () {
       this.setMediaControls()
+      this.podcastURLS.forEach(pod => {
+        fetch(pod.url)
+        .then(response => response.text())
+        .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+        .then(data => {
+          const items = data.querySelectorAll("item");
+          for (let i = 0; i < items.length; i++) {
+            let item = items[i];
+            let image = item.getElementsByTagName("itunes:image")[0].getAttribute("href")
+            let title = item.querySelector("title").innerHTML
+            let url = item.querySelector("enclosure").getAttribute("url")
+            let podcast = { name: title.replace("<![CDATA[", "").replace("]]>", ""), url: url, image: image }
+            console.log(pod.name)
+            if(pod.name === 'Code Life') {
+              this.codeLifeEpisodes.push(podcast)
+            } else {
+              this.intimateEpisodes.push(podcast)
+            }
+
+          }
+        })
+      })
     }
   }
 </script>
