@@ -22,9 +22,9 @@
           <v-text-field type="url" placeholder="Enter podcast RSS feed" v-model="feed" label="Podcast Feed" />
         </p>
         <v-row class="text-center">
-          <v-btn v-on:click="playAudio" v-if="!isPlaying">Play</v-btn>
+          <v-btn class="ma-md-4" v-on:click="playAudio" v-if="!isPlaying">Play</v-btn>
           <v-btn v-on:click="stopAudio" v-else color="red">Stop</v-btn>
-          <v-btn v-on:click="getFeed" color="blue">Get Feed</v-btn>
+          <v-btn class="ma-md-4" v-on:click="getFeed" color="blue">Get Feed</v-btn>
         </v-row>
       </v-col>
     </v-row>
@@ -46,9 +46,6 @@
           single-line
           @change="playPodcast"
         ></v-select>
-    </v-row>
-    <v-row>
-      <canvas id = "analyser_render"></canvas>
     </v-row>
   </v-container>
 </template>
@@ -103,17 +100,13 @@
         }
       ],
       favoritePodcasts: [],
-      ctx: {},
-      canvas: {},
-      analyser: {},
-      audioContext: {},
-
       podcastURLS: [
         { url: 'https://anchor.fm/s/fdc3ac0/podcast/rss', name: 'Code Life' },
         { url: 'https://anchor.fm/s/42d5fca4/podcast/rss' , name: 'Intimate Spaces' },
         { url: 'https://feeds.megaphone.fm/darknetdiaries', name: 'Darknet Diaries'}
 
-      ]
+      ],
+      skipTime: 10
     }),
     methods: {
       setMediaControls: function () {
@@ -135,8 +128,16 @@
           navigator.mediaSession.setActionHandler('play', this.playAudio());
           navigator.mediaSession.setActionHandler('pause', this.pauseAudio());
           navigator.mediaSession.setActionHandler('stop', this.stopAudio());
-          navigator.mediaSession.setActionHandler('seekbackward', function() { /* Code excerpted. */ });
-          navigator.mediaSession.setActionHandler('seekforward', function() { /* Code excerpted. */ });
+          navigator.mediaSession.setActionHandler('seekbackward', () => {
+           // User clicked "Seek Backward" media notification icon.
+           this.audio.currentTime = Math.max(this.audio.currentTime - this.skipTime, 0);
+          });
+
+          navigator.mediaSession.setActionHandler('seekforward', () => {
+           // User clicked "Seek Forward" media notification icon.
+           this.audio.currentTime = Math.min(this.audio.currentTime + this.skipTime,
+                         this.audio.duration);
+          });
           navigator.mediaSession.setActionHandler('seekto', function() { /* Code excerpted. */ });
           navigator.mediaSession.setActionHandler('previoustrack', function() { /* Code excerpted. */ });
           navigator.mediaSession.setActionHandler('nexttrack', function() { /* Code excerpted. */ });
@@ -144,34 +145,18 @@
       },
       playPodcast: function () {
         this.setAudio(this.currentPodcast)
-        this.playAudio()
       },
       playAudio: function () {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-
-        this.audioContext = new AudioContext();
-
         if(this.isPlaying){
           this.isPlaying = false
           this.audio.pause()
           this.audio = {}
         }
         this.audio = new Audio(this.url)
-        this.audio.crossOrigin = "no-cors";
         this.isPlaying = true
         this.audio.play()
           .then(()=> {
         }).catch(error => { console.log(error) });
-
-
-        this.source = this.audioContext.createMediaElementSource(this.audio);
-        this.analyser = this.audioContext.createAnalyser()
-        this.source.connect(this.analyser);
-        this.analyser.connect(this.audioContext.destination);
-        this.canvas = document.getElementById('analyser_render');
-        this.ctx = this.canvas.getContext('2d');
-        this.frameLooper();
-
       },
       pauseAudio: function () {
         this.audio.pause()
@@ -195,6 +180,7 @@
       },
       getFeed: function () {
         this.favoritePodcasts = []
+        let author = ''
         fetch(this.feed)
         .then(response => response.text())
         .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
@@ -205,12 +191,10 @@
             console.log(item)
             let image = item.getElementsByTagName("itunes:image")[0].getAttribute("href")
             let title = item.querySelector("title").innerHTML.replace("<![CDATA[", "").replace("]]>", "")
-            let author = item.getElementsByTagName("dc:creator")[0]
-
-            if(!author){
-              author = item.getElementsByTagName("itunes:author")[0].innerHTML
+            if(item.getElementsByTagName("dc:creator").length >0){
+               author = item.getElementsByTagName("dc:creator")[0].innerHTML.replace("<![CDATA[", "").replace("]]>", "")
             } else {
-              author.innerHTML.replace("<![CDATA[", "").replace("]]>", "")
+               author = item.getElementsByTagName("itunes:author")[0].innerHTML
             }
             let url = item.querySelector("enclosure").getAttribute("url")
             let podcast = { name: title, url: url, image: image, author: author }
@@ -224,21 +208,6 @@
         this.currentPodcast = podcast
         this.getFeed()
       },
-      frameLooper: function () {
-        window.webkitRequestAnimationFrame(this.frameLooper);
-        const fbc_array = new Uint8Array(this.analyser.frequencyBinCount);
-        this.analyser.getByteFrequencyData(fbc_array);
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.fillStyle = "#00CCFF";
-        let bars = 100;
-        let bar_x, bar_width, bar_height = 0
-        for (var i = 0; i < bars; i++){
-            bar_x = i * 3;
-            bar_width = 2;
-            bar_height = -(fbc_array[i]/2);
-            this.ctx.fillRect(bar_x, this.canvas.height, bar_width, bar_height);
-        }
-      }
     },
     mounted () {
       this.setMediaControls()
