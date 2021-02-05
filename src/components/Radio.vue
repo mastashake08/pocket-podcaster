@@ -166,7 +166,6 @@
 
         this.source = this.audioContext.createMediaElementSource(this.audio);
         this.analyser = this.audioContext.createAnalyser()
-        console.log('Source', this.source)
         this.source.connect(this.analyser);
         this.analyser.connect(this.audioContext.destination);
         this.canvas = document.getElementById('analyser_render');
