@@ -47,6 +47,9 @@
           @change="playPodcast"
         ></v-select>
     </v-row>
+    <v-row>
+      <canvas id = "analyser_render"></canvas>
+    </v-row>
   </v-container>
 </template>
 
@@ -100,6 +103,10 @@
         }
       ],
       favoritePodcasts: [],
+      ctx: {},
+      canvas: {},
+      analyser: {},
+      audioContext: {},
 
       podcastURLS: [
         { url: 'https://anchor.fm/s/fdc3ac0/podcast/rss', name: 'Code Life' },
@@ -140,16 +147,32 @@
         this.playAudio()
       },
       playAudio: function () {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+
+        this.audioContext = new AudioContext();
+
         if(this.isPlaying){
           this.isPlaying = false
           this.audio.pause()
           this.audio = {}
         }
         this.audio = new Audio(this.url)
+        this.audio.crossOrigin = "anonymous";
         this.isPlaying = true
         this.audio.play()
           .then(()=> {
         }).catch(error => { console.log(error) });
+
+
+        this.source = this.audioContext.createMediaElementSource(this.audio);
+        this.analyser = this.audioContext.createAnalyser()
+        console.log('Source', this.source)
+        this.source.connect(this.analyser);
+        this.analyser.connect(this.audioContext.destination);
+        this.canvas = document.getElementById('analyser_render');
+        this.ctx = this.canvas.getContext('2d');
+        this.frameLooper();
+
       },
       pauseAudio: function () {
         this.audio.pause()
@@ -184,11 +207,12 @@
             let image = item.getElementsByTagName("itunes:image")[0].getAttribute("href")
             let title = item.querySelector("title").innerHTML.replace("<![CDATA[", "").replace("]]>", "")
             let author = item.getElementsByTagName("dc:creator")[0]
-            console.log(author)
+
             if(!author){
-              author = item.getElementsByTagName("itunes:author")[0]
+              author = item.getElementsByTagName("itunes:author")[0].innerHTML
+            } else {
+              author.innerHTML.replace("<![CDATA[", "").replace("]]>", "")
             }
-            author.innerHTML.replace("<![CDATA[", "").replace("]]>", "")
             let url = item.querySelector("enclosure").getAttribute("url")
             let podcast = { name: title, url: url, image: image, author: author }
             console.log(podcast)
@@ -200,13 +224,27 @@
         this.feed = podcast.url
         this.currentPodcast = podcast
         this.getFeed()
+      },
+      frameLooper: function () {
+        window.webkitRequestAnimationFrame(this.frameLooper);
+        const fbc_array = new Uint8Array(this.analyser.frequencyBinCount);
+        this.analyser.getByteFrequencyData(fbc_array);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillStyle = "#00CCFF";
+        let bars = 100;
+        let bar_x, bar_width, bar_height = 0
+        for (var i = 0; i < bars; i++){
+            bar_x = i * 3;
+            bar_width = 2;
+            bar_height = -(fbc_array[i]/2);
+            this.ctx.fillRect(bar_x, this.canvas.height, bar_width, bar_height);
+        }
       }
     },
     mounted () {
       this.setMediaControls()
     },
     created () {
-
     }
   }
 </script>
