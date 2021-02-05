@@ -157,7 +157,7 @@
           this.audio = {}
         }
         this.audio = new Audio(this.url)
-        this.audio.crossOrigin = "anonymous";
+        this.audio.crossOrigin = "no-cors";
         this.isPlaying = true
         this.audio.play()
           .then(()=> {
