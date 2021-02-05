@@ -18,9 +18,13 @@
         <p class="subheading font-weight-regular text-center">
           <v-text-field type="url" placeholder="Enter stream URL" v-model="url" label="Stream URL" />
         </p>
+        <p class="subheading font-weight-regular text-center">
+          <v-text-field type="url" placeholder="Enter podcast RSS feed" v-model="feed" label="Podcast Feed" />
+        </p>
         <v-row class="text-center">
           <v-btn v-on:click="playAudio" v-if="!isPlaying">Play</v-btn>
           <v-btn v-on:click="stopAudio" v-else color="red">Stop</v-btn>
+          <v-btn v-on:click="getFeed" color="blue">Get Feed</v-btn>
         </v-row>
       </v-col>
     </v-row>
@@ -28,13 +32,15 @@
       <v-btn class="pa-md-4 mx-lg-auto" v-for="x in presets" v-on:click="setAudio(x)" :key="x.name" :color="x.color"> {{x.name}} </v-btn>
     </v-row>
     <v-row class="text-center">
+      <v-btn class="pa-md-4 mx-lg-auto ma-md-4" v-for="x in podcastURLS" v-on:click="setFeed(x)" :key="x.name" color="#be4164"> {{x.name}} </v-btn>
+    </v-row>
+    <v-row class="text-center" v>
       <v-select
           v-model="currentPodcast"
-          :hint="`${currentPodcast.name}, ${currentPodcast.author}`"
           :items="favoritePodcasts"
           item-text="name"
           item-value="url"
-          label="Favorite Podcasts"
+          :label="currentPodcast.name"
           persistent-hint
           return-object
           single-line
@@ -52,6 +58,7 @@
       isPlaying: false,
       audio: {},
       url : '',
+      feed: '',
       currentPodcast: {},
       selectedEpisode: {},
       presets : [
@@ -97,7 +104,7 @@
       podcastURLS: [
         { url: 'https://anchor.fm/s/fdc3ac0/podcast/rss', name: 'Code Life' },
         { url: 'https://anchor.fm/s/42d5fca4/podcast/rss' , name: 'Intimate Spaces' },
-        { url: 'https://feeds.npr.org/510289/podcast.xml', name: 'Project Money'}
+        { url: 'https://feeds.megaphone.fm/darknetdiaries', name: 'Darknet Diaries'}
 
       ]
     }),
@@ -163,14 +170,10 @@
           ]
         }
         this.playAudio()
-      }
-    },
-    mounted () {
-      this.setMediaControls()
-    },
-    created () {
-      this.podcastURLS.forEach(pod => {
-        fetch(pod.url)
+      },
+      getFeed: function () {
+        this.favoritePodcasts = []
+        fetch(this.feed)
         .then(response => response.text())
         .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
         .then(data => {
@@ -180,13 +183,30 @@
             console.log(item)
             let image = item.getElementsByTagName("itunes:image")[0].getAttribute("href")
             let title = item.querySelector("title").innerHTML.replace("<![CDATA[", "").replace("]]>", "")
-            let author = item.getElementsByTagName("dc:creator")[0].innerHTML.replace("<![CDATA[", "").replace("]]>", "")
+            let author = item.getElementsByTagName("dc:creator")[0]
+            console.log(author)
+            if(!author){
+              author = item.getElementsByTagName("itunes:author")[0]
+            }
+            author.innerHTML.replace("<![CDATA[", "").replace("]]>", "")
             let url = item.querySelector("enclosure").getAttribute("url")
             let podcast = { name: title, url: url, image: image, author: author }
+            console.log(podcast)
             this.favoritePodcasts.push(podcast)
           }
         })
-      })
+      },
+      setFeed: function(podcast) {
+        this.feed = podcast.url
+        this.currentPodcast = podcast
+        this.getFeed()
+      }
+    },
+    mounted () {
+      this.setMediaControls()
+    },
+    created () {
+
     }
   }
 </script>
