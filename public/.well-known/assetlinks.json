@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "xyz.appmaker.gltrmt",
+      "sha256_cert_fingerprints": ["51:35:A6:7C:AC:F1:A0:CE:7C:63:9D:63:1A:9C:04:3E:8A:8E:1E:44:DB:F1:1C:22:64:0F:EF:2E:84:90:61:31"]
+    }
+  }
+]
